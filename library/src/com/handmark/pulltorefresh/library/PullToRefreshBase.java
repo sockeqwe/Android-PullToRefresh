@@ -34,6 +34,7 @@ import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.handmark.pulltorefresh.library.OverscrollLimitExceededListener.OverscrollDirection;
 import com.handmark.pulltorefresh.library.internal.FlipLoadingLayout;
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 import com.handmark.pulltorefresh.library.internal.RotateLoadingLayout;
@@ -1011,7 +1012,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 
 		if (mOverscrollExceededListener != null
 				&& Math.abs(value) > mOverscrollExceededListener.getLimit()) {
-			mOverscrollExceededListener.onExceeded();
+
+			if (value < 0)
+				mOverscrollExceededListener.onExceeded(OverscrollDirection.TOP);
+			else
+				mOverscrollExceededListener
+						.onExceeded(OverscrollDirection.BOTTOM);
+
 		}
 
 		// Clamp value to with pull scroll range
@@ -1277,7 +1284,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 		}
 
 		setHeaderScroll(newScrollValue);
-		Log.d("Test", "newScrollValue " + newScrollValue);
 
 		if (newScrollValue != 0 && !isRefreshing()) {
 			float scale = Math.abs(newScrollValue) / (float) itemDimension;
