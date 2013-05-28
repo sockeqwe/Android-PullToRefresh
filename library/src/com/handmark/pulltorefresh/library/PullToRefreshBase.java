@@ -100,6 +100,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 	private OnPullEventListener<T> mOnPullEventListener;
 	private OverscrollLimitExceededListener mOverscrollExceededListener;
 
+	private static PullToRefreshOverscrollLayoutFactory overscrollLayoutFactory;
+
 	private SmoothScrollRunnable mCurrentSmoothScrollRunnable;
 
 	// ===========================================================
@@ -1429,11 +1431,19 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 			switch (this) {
 			case ROTATE:
 			default:
-				return new RotateLoadingLayout(context, mode, scrollDirection,
-						attrs);
+				if (overscrollLayoutFactory != null)
+					return overscrollLayoutFactory.createRotateLoadingLayout(
+							context, mode, scrollDirection, attrs);
+				else
+					return new RotateLoadingLayout(context, mode,
+							scrollDirection, attrs);
 			case FLIP:
-				return new FlipLoadingLayout(context, mode, scrollDirection,
-						attrs);
+				if (overscrollLayoutFactory != null)
+					return overscrollLayoutFactory.createFlipLoadingLayout(
+							context, mode, scrollDirection, attrs);
+				else
+					return new FlipLoadingLayout(context, mode,
+							scrollDirection, attrs);
 			}
 		}
 	}
@@ -1766,6 +1776,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 
 	static interface OnSmoothScrollFinishedListener {
 		void onSmoothScrollFinished();
+	}
+
+	/**
+	 * Sets the {@link PullToRefreshOverscrollLayoutFactory} that is used to
+	 * generate Layout headers and footer
+	 * 
+	 * @param overscrollLayoutFac
+	 */
+	public static void setOverscrollLayoutFactory(
+			PullToRefreshOverscrollLayoutFactory overscrollLayoutFac) {
+		overscrollLayoutFactory = overscrollLayoutFac;
 	}
 
 }
