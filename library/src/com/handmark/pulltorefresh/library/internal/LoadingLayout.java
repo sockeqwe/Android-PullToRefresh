@@ -271,7 +271,8 @@ public abstract class LoadingLayout extends FrameLayout implements
 		if (View.VISIBLE == mHeaderProgress.getVisibility()) {
 			mHeaderProgress.setVisibility(View.INVISIBLE);
 		}
-		if (View.VISIBLE == mHeaderImage.getVisibility()) {
+		if (mHeaderImage != null
+				&& View.VISIBLE == mHeaderImage.getVisibility()) {
 			mHeaderImage.setVisibility(View.INVISIBLE);
 		}
 		if (View.VISIBLE == mSubHeaderText.getVisibility()) {
@@ -299,7 +300,7 @@ public abstract class LoadingLayout extends FrameLayout implements
 			mHeaderText.setText(mRefreshingLabel);
 		}
 
-		if (mUseIntrinsicAnimation) {
+		if (mUseIntrinsicAnimation && mHeaderImage != null) {
 			((AnimationDrawable) mHeaderImage.getDrawable()).start();
 		} else {
 			// Now call the callback
@@ -324,9 +325,10 @@ public abstract class LoadingLayout extends FrameLayout implements
 		if (null != mHeaderText) {
 			mHeaderText.setText(mPullLabel);
 		}
-		mHeaderImage.setVisibility(View.VISIBLE);
+		if (mHeaderImage != null)
+			mHeaderImage.setVisibility(View.VISIBLE);
 
-		if (mUseIntrinsicAnimation) {
+		if (mUseIntrinsicAnimation && mHeaderImage != null) {
 			((AnimationDrawable) mHeaderImage.getDrawable()).stop();
 		} else {
 			// Now call the callback
@@ -350,7 +352,8 @@ public abstract class LoadingLayout extends FrameLayout implements
 	@Override
 	public final void setLoadingDrawable(Drawable imageDrawable) {
 		// Set Drawable
-		mHeaderImage.setImageDrawable(imageDrawable);
+		if (mHeaderImage != null)
+			mHeaderImage.setImageDrawable(imageDrawable);
 		mUseIntrinsicAnimation = (imageDrawable instanceof AnimationDrawable);
 
 		// Now call the callback
@@ -384,7 +387,8 @@ public abstract class LoadingLayout extends FrameLayout implements
 		if (View.INVISIBLE == mHeaderProgress.getVisibility()) {
 			mHeaderProgress.setVisibility(View.VISIBLE);
 		}
-		if (View.INVISIBLE == mHeaderImage.getVisibility()) {
+		if (mHeaderImage != null
+				&& View.INVISIBLE == mHeaderImage.getVisibility()) {
 			mHeaderImage.setVisibility(View.VISIBLE);
 		}
 		if (View.INVISIBLE == mSubHeaderText.getVisibility()) {

@@ -45,9 +45,12 @@ public class RotateLoadingLayout extends LoadingLayout {
 		mRotateDrawableWhilePulling = attrs.getBoolean(
 				R.styleable.PullToRefresh_ptrRotateDrawableWhilePulling, true);
 
-		mHeaderImage.setScaleType(ScaleType.MATRIX);
 		mHeaderImageMatrix = new Matrix();
-		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
+
+		if (mHeaderImage != null) {
+			mHeaderImage.setScaleType(ScaleType.MATRIX);
+			mHeaderImage.setImageMatrix(mHeaderImageMatrix);
+		}
 
 		mRotateAnimation = new RotateAnimation(0, 720,
 				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
@@ -78,22 +81,25 @@ public class RotateLoadingLayout extends LoadingLayout {
 		}
 
 		mHeaderImageMatrix.setRotate(angle, mRotationPivotX, mRotationPivotY);
-		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
+		if (mHeaderImage != null)
+			mHeaderImage.setImageMatrix(mHeaderImageMatrix);
 	}
 
 	@Override
 	protected void refreshingImpl() {
-		mHeaderImage.startAnimation(mRotateAnimation);
+		if (mHeaderImage != null)
+			mHeaderImage.startAnimation(mRotateAnimation);
 	}
 
 	@Override
 	protected void resetImpl() {
-		mHeaderImage.clearAnimation();
+		if (mHeaderImage != null)
+			mHeaderImage.clearAnimation();
 		resetImageRotation();
 	}
 
 	private void resetImageRotation() {
-		if (null != mHeaderImageMatrix) {
+		if (null != mHeaderImageMatrix && mHeaderImage != null) {
 			mHeaderImageMatrix.reset();
 			mHeaderImage.setImageMatrix(mHeaderImageMatrix);
 		}
