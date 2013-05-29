@@ -66,12 +66,13 @@ public abstract class LoadingLayout extends FrameLayout implements
 	private CharSequence mReleaseLabel;
 
 	public LoadingLayout(Context context, final Mode mode,
-			final Orientation scrollDirection, TypedArray attrs) {
+			final Orientation scrollDirection, TypedArray attrs,
+			boolean isHeader) {
 		super(context);
 		mMode = mode;
 		mScrollDirection = scrollDirection;
 
-		inflateLayout(context, scrollDirection);
+		inflateLayout(context, scrollDirection, attrs, isHeader);
 
 		mInnerLayout = (FrameLayout) findViewById(R.id.fl_inner);
 		mHeaderText = (TextView) mInnerLayout
@@ -200,16 +201,43 @@ public abstract class LoadingLayout extends FrameLayout implements
 		reset();
 	}
 
-	protected void inflateLayout(Context context, Orientation scrollDirection) {
+	protected void inflateLayout(Context context, Orientation scrollDirection,
+			TypedArray attrs, boolean isHeader) {
+
+		int headerRes = attrs.getResourceId(
+				R.styleable.PullToRefresh_ptrOverscrollHeaderLayout, -1);
+		int footerRes = attrs.getResourceId(
+				R.styleable.PullToRefresh_ptrOverscrollFooterLayout, -1);
+
 		switch (scrollDirection) {
 		case HORIZONTAL:
-			LayoutInflater.from(context).inflate(
-					R.layout.pull_to_refresh_header_horizontal, this);
+
+			int hRes = R.layout.pull_to_refresh_header_horizontal;
+
+			if (isHeader)
+				hRes = (headerRes != -1) ? headerRes
+						: R.layout.pull_to_refresh_header_horizontal;
+
+			else
+				hRes = (footerRes != -1) ? footerRes
+						: R.layout.pull_to_refresh_header_horizontal;
+
+			LayoutInflater.from(context).inflate(hRes, this);
 			break;
 		case VERTICAL:
 		default:
-			LayoutInflater.from(context).inflate(
-					R.layout.pull_to_refresh_header_vertical, this);
+
+			int vRes = R.layout.pull_to_refresh_header_vertical;
+
+			if (isHeader)
+				vRes = (headerRes != -1) ? headerRes
+						: R.layout.pull_to_refresh_header_vertical;
+
+			else
+				vRes = (footerRes != -1) ? footerRes
+						: R.layout.pull_to_refresh_header_vertical;
+
+			LayoutInflater.from(context).inflate(vRes, this);
 			break;
 		}
 	}

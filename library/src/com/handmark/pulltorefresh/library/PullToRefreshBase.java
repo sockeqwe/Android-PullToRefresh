@@ -100,8 +100,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 	private OnPullEventListener<T> mOnPullEventListener;
 	private OverscrollLimitExceededListener mOverscrollExceededListener;
 
-	private static PullToRefreshOverscrollLayoutFactory overscrollLayoutFactory;
-
 	private SmoothScrollRunnable mCurrentSmoothScrollRunnable;
 
 	// ===========================================================
@@ -627,9 +625,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 	}
 
 	protected LoadingLayout createLoadingLayout(Context context, Mode mode,
-			TypedArray attrs) {
-		LoadingLayout layout = mLoadingAnimationStyle.createLoadingLayout(
-				context, mode, getPullToRefreshScrollDirection(), attrs);
+			TypedArray attrs, boolean header) {
+		LoadingLayout layout = mLoadingAnimationStyle
+				.createLoadingLayout(context, mode,
+						getPullToRefreshScrollDirection(), attrs, header);
 		layout.setVisibility(View.INVISIBLE);
 		return layout;
 	}
@@ -683,11 +682,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 		return mFooterLayout.getContentSize();
 	}
 
-	protected final LoadingLayout getHeaderLayout() {
+	public final LoadingLayout getHeaderLayout() {
 		return mHeaderLayout;
 	}
 
-	protected final int getHeaderSize() {
+	public final int getHeaderSize() {
 		return mHeaderLayout.getContentSize();
 	}
 
@@ -1189,8 +1188,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 		addRefreshableView(context, mRefreshableView);
 
 		// We need to create now layouts now
-		mHeaderLayout = createLoadingLayout(context, Mode.PULL_FROM_START, a);
-		mFooterLayout = createLoadingLayout(context, Mode.PULL_FROM_END, a);
+		mHeaderLayout = createLoadingLayout(context, Mode.PULL_FROM_START, a,
+				true);
+		mFooterLayout = createLoadingLayout(context, Mode.PULL_FROM_END, a,
+				false);
 
 		/**
 		 * Styleables from XML
@@ -1427,23 +1428,15 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 		}
 
 		LoadingLayout createLoadingLayout(Context context, Mode mode,
-				Orientation scrollDirection, TypedArray attrs) {
+				Orientation scrollDirection, TypedArray attrs, boolean header) {
 			switch (this) {
 			case ROTATE:
 			default:
-				if (overscrollLayoutFactory != null)
-					return overscrollLayoutFactory.createRotateLoadingLayout(
-							context, mode, scrollDirection, attrs);
-				else
-					return new RotateLoadingLayout(context, mode,
-							scrollDirection, attrs);
+				return new RotateLoadingLayout(context, mode, scrollDirection,
+						attrs, header);
 			case FLIP:
-				if (overscrollLayoutFactory != null)
-					return overscrollLayoutFactory.createFlipLoadingLayout(
-							context, mode, scrollDirection, attrs);
-				else
-					return new FlipLoadingLayout(context, mode,
-							scrollDirection, attrs);
+				return new FlipLoadingLayout(context, mode, scrollDirection,
+						attrs, header);
 			}
 		}
 	}
@@ -1776,17 +1769,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 
 	static interface OnSmoothScrollFinishedListener {
 		void onSmoothScrollFinished();
-	}
-
-	/**
-	 * Sets the {@link PullToRefreshOverscrollLayoutFactory} that is used to
-	 * generate Layout headers and footer
-	 * 
-	 * @param overscrollLayoutFac
-	 */
-	public static void setOverscrollLayoutFactory(
-			PullToRefreshOverscrollLayoutFactory overscrollLayoutFac) {
-		overscrollLayoutFactory = overscrollLayoutFac;
 	}
 
 }

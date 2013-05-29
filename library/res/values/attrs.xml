@@ -70,6 +70,14 @@
         	takes effect when using the 'Rotate' Animation Style.
         -->
         <attr name="ptrRotateDrawableWhilePulling" format="reference|boolean" />
+        
+        <!-- Specify the layout of the header (overscroll header). This layout will be inflated as header -->
+        <attr name="ptrOverscrollHeaderLayout" format="reference" />
+        
+        <!-- Specify the layout of the footer (footer header). This layout will be inflated as footer -->
+        <attr name="ptrOverscrollFooterLayout" format="reference" />
+        
+        
 
         <!-- BELOW HERE ARE DEPRECEATED. DO NOT USE. -->
         <attr name="ptrAdapterViewBackground" format="reference|color" />

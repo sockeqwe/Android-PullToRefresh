@@ -38,16 +38,19 @@ public class RotateLoadingLayout extends LoadingLayout {
 
 	private final boolean mRotateDrawableWhilePulling;
 
-	public RotateLoadingLayout(Context context, Mode mode, Orientation scrollDirection, TypedArray attrs) {
-		super(context, mode, scrollDirection, attrs);
+	public RotateLoadingLayout(Context context, Mode mode,
+			Orientation scrollDirection, TypedArray attrs, boolean isHeader) {
+		super(context, mode, scrollDirection, attrs, isHeader);
 
-		mRotateDrawableWhilePulling = attrs.getBoolean(R.styleable.PullToRefresh_ptrRotateDrawableWhilePulling, true);
+		mRotateDrawableWhilePulling = attrs.getBoolean(
+				R.styleable.PullToRefresh_ptrRotateDrawableWhilePulling, true);
 
 		mHeaderImage.setScaleType(ScaleType.MATRIX);
 		mHeaderImageMatrix = new Matrix();
 		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
 
-		mRotateAnimation = new RotateAnimation(0, 720, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+		mRotateAnimation = new RotateAnimation(0, 720,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 				0.5f);
 		mRotateAnimation.setInterpolator(ANIMATION_INTERPOLATOR);
 		mRotateAnimation.setDuration(ROTATION_ANIMATION_DURATION);
@@ -55,13 +58,17 @@ public class RotateLoadingLayout extends LoadingLayout {
 		mRotateAnimation.setRepeatMode(Animation.RESTART);
 	}
 
+	@Override
 	public void onLoadingDrawableSet(Drawable imageDrawable) {
 		if (null != imageDrawable) {
-			mRotationPivotX = Math.round(imageDrawable.getIntrinsicWidth() / 2f);
-			mRotationPivotY = Math.round(imageDrawable.getIntrinsicHeight() / 2f);
+			mRotationPivotX = Math
+					.round(imageDrawable.getIntrinsicWidth() / 2f);
+			mRotationPivotY = Math
+					.round(imageDrawable.getIntrinsicHeight() / 2f);
 		}
 	}
 
+	@Override
 	protected void onPullImpl(float scaleOfLayout) {
 		float angle;
 		if (mRotateDrawableWhilePulling) {
