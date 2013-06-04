@@ -99,6 +99,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 	private OnRefreshListener2<T> mOnRefreshListener2;
 	private OnPullEventListener<T> mOnPullEventListener;
 	private OverscrollLimitExceededListener mOverscrollExceededListener;
+	private PullDownStateListener mPullDownStateListener;
+
+	private boolean mPullDownStateDelivered = false;
+	private boolean mOverscrollLimitExceededDelivered = false;
 
 	private SmoothScrollRunnable mCurrentSmoothScrollRunnable;
 
@@ -157,6 +161,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 		}
 
 		return false;
+	}
+
+	public void setPullDownStateListner(PullDownStateListener l) {
+		this.mPullDownStateListener = l;
 	}
 
 	@Override
@@ -1011,7 +1019,21 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 			Log.d(LOG_TAG, "setHeaderScroll: " + value);
 		}
 
+		if (value < 0 && mPullDownStateListener != null
+				&& !mPullDownStateDelivered) {
+			mPullDownStateDelivered = true;
+			mPullDownStateListener.onPullDownStarted();
+		}
+
+		if (value == 0 && mPullDownStateListener != null) {
+
+			mPullDownStateDelivered = false;
+			mPullDownStateListener.onPullDownFinished();
+		}
+
+		// Overscroll Limit exceeded Listener
 		if (mOverscrollExceededListener != null
+				&& !mOverscrollLimitExceededDelivered
 				&& Math.abs(value) > mOverscrollExceededListener.getLimit()) {
 
 			if (value < 0)
@@ -1019,6 +1041,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 			else
 				mOverscrollExceededListener
 						.onExceeded(OverscrollDirection.BOTTOM);
+
+			mOverscrollLimitExceededDelivered = true;
 
 		}
 
