@@ -1016,16 +1016,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout
 	 */
 	protected final void setHeaderScroll(int value) {
 		if (DEBUG) {
-			Log.d(LOG_TAG, "setHeaderScroll: " + value);
+			Log.d(LOG_TAG, "setHeaderScroll: " + value + " " + mState);
 		}
 
 		if (value < 0 && mPullDownStateListener != null
-				&& !mPullDownStateDelivered) {
+				&& !mPullDownStateDelivered && mState != State.REFRESHING) {
 			mPullDownStateDelivered = true;
 			mPullDownStateListener.onPullDownStarted();
 		}
 
-		if (value == 0 && mPullDownStateListener != null) {
+		if (value == 0 && mPullDownStateListener != null
+				&& mState != State.REFRESHING && mPullDownStateDelivered) {
 
 			mPullDownStateDelivered = false;
 			mPullDownStateListener.onPullDownFinished();
